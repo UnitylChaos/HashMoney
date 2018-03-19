@@ -11,9 +11,13 @@ contract HashMoney is EIP20 {
 
   }
 
+  mapping(address => uint) public pastClaims;
+
   function claim(uint nonce) public {
+    require(nonce > pastClaims[msg.sender]);
     bytes32 h = keccak256(msg.sender, nonce);
     balances[msg.sender] += (uint(1) << countLeadingZeroes(h));
+    pastClaims[msg.sender] = nonce;
   }
 
   function countLeadingZeroes(bytes32 x) public returns (uint) {
